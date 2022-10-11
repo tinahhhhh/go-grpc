@@ -4,18 +4,18 @@ option go_package = "github.com/tinahhhhh/go-grpc/spam";
 
 package spam;
 
-// The greeting service definition.
-service Greeter {
-  // Sends a greeting
-  rpc SayHello (HelloRequest) returns (HelloReply) {}
+// The assessment service definition.
+service Assessment {
+  // Sends a assessment resuest
+  rpc CheckSpam (AssessmentRequest) returns (AssessmentReply) {}
 }
 
 // The request message containing the user's name.
-message HelloRequest {
-  string name = 1;
+message AssessmentRequest {
+  string entity = 1;
 }
 
 // The response message containing the greetings
-message HelloReply {
+message AssessmentReply {
   string message = 1;
 }

@@ -3,37 +3,45 @@ package main
 import (
 	"context"
 	"log"
-	"os"
+	"flag"
 	"time"
+	"bufio"
+	"os"
+	"fmt"
 
 	"google.golang.org/grpc"
-	pb "google.golang.org/grpc/examples/helloworld/helloworld"
+	"google.golang.org/grpc/credentials/insecure"
+	pb "github.com/tinahhhhh/go-grpc/spam"
 )
 
-const (
-	address     = "localhost:50051"
-	defaultName = "world"
+
+var (
+	addr = flag.String("addr", "localhost:50051", "the address to connect to")
 )
 
 func main() {
+	flag.Parse()
 	// Set up a connection to the server.
-	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
 	defer conn.Close()
-	c := pb.NewGreeterClient(conn)
+	c := pb.NewAssessmentClient(conn)
 
 	// Contact the server and print out its response.
-	name := defaultName
-	if len(os.Args) > 1 {
-		name = os.Args[1]
-	}
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 	defer cancel()
-	r, err := c.SayHello(ctx, &pb.HelloRequest{Name: name})
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("Input: ")
+	text, err := reader.ReadString('\n')
 	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+		panic(err)
 	}
-	log.Printf("Greeting: %s", r.Message)
+
+	r, err := c.CheckSpam(ctx, &pb.AssessmentRequest{Entity: text})
+	if err != nil {
+		log.Fatalf("could not assess: %v", err)
+	}
+	log.Printf("Spam Assessment Result: %s", r.GetMessage())
 }
