@@ -10,12 +10,12 @@ service Assessment {
   rpc CheckSpam (AssessmentRequest) returns (AssessmentReply) {}
 }
 
-// The request message containing the user's name.
+// The request message containing the entity.
 message AssessmentRequest {
   string entity = 1;
 }
 
-// The response message containing the greetings
+// The response message containing the result of the spam assessment
 message AssessmentReply {
   string message = 1;
 }

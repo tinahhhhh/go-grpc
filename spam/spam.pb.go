@@ -20,7 +20,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// The request message containing the user's name.
+// The request message containing the entity.
 type AssessmentRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -68,7 +68,7 @@ func (x *AssessmentRequest) GetEntity() string {
 	return ""
 }
 
-// The response message containing the greetings
+// The response message containing the result of the spam assessment
 type AssessmentReply struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

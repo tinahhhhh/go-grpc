@@ -29,19 +29,21 @@ func main() {
 	defer conn.Close()
 	c := pb.NewAssessmentClient(conn)
 
-	// Contact the server and print out its response.
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
-	defer cancel()
-	reader := bufio.NewReader(os.Stdin)
+    // client input
+    reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Input: ")
 	text, err := reader.ReadString('\n')
 	if err != nil {
 		panic(err)
 	}
 
+	// Contact the server and print out its response.
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
+	defer cancel()
+
 	r, err := c.CheckSpam(ctx, &pb.AssessmentRequest{Entity: text})
 	if err != nil {
 		log.Fatalf("could not assess: %v", err)
 	}
-	log.Printf("Spam Assessment Result: %s", r.GetMessage())
+	log.Printf(r.GetMessage())
 }
