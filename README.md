@@ -26,7 +26,7 @@ This project is a spam assessment application based on Go programming language a
 	apt install -y protobuf-compiler
 	```
 
-4. Run the server
+4. Run the server (Please provide the url.)
 
 	```
 	go run server/main.go -url https:xxx
@@ -48,9 +48,10 @@ This project is a spam assessment application based on Go programming language a
 
 
 
-### Run on docker continers
+### Run on docker continers [Testing]
 TODO: Use docker composer to make client and server contrainer comunicate. 
-      Use socat to execute STDIN to the client container.
+      Use socat to execute STDIN to the client container. 
+      **The following commands and server address in client code need to be modified according to docker network environment.**
 
 1. **Modify** the **server/Dockerfile** file (In the last line (#22)) by providing URL for the data source.
 
