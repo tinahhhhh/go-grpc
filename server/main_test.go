@@ -51,8 +51,8 @@ func TestCheckEventDuraionLimit(t *testing.T) {
     }
 }
 
-func TestGetIPfromUserID(t *testing.T) {
-    ip := GetIPfromUserID("Jia923")
+func TestGetIPfromEntity(t *testing.T) {
+    ip := GetIPfromEntity("user_id", "Jia923")
     if ip != "192.168.254.222" {
         t.Fatalf("Not pass")
     }

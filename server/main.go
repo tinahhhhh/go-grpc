@@ -51,16 +51,21 @@ func (s *server) CheckSpam(ctx context.Context, in *pb.AssessmentRequest) (*pb.A
     switch entity_type {
     case "user_id":
         message, is_spam, num_data = CheckSpamByQuery("user_id", entity_value, "Login", login_limit, login_time_duration)
-        if num_data == 0 {    // if no login data
+        if num_data == 0 {    // if no login data, check registration data
             message, is_spam, num_data = CheckSpamByQuery("user_id", entity_value, "Registration", login_limit, login_time_duration)
         }
         if num_data != 0 && is_spam == false {
             // check ip spam rule
-            ip := GetIPfromUserID(entity_value)
+            ip := GetIPfromEntity(entity_type, entity_value)
             message, _, _ = CheckSpamByQuery("ip", ip, "Install", ip_install_limit, ip_install_time_duration)
         }
     case "email":
-        message, _, _ = CheckSpamByQuery("email", entity_value, "Registration", registration_limit, registration_time_duration)
+        message, is_spam, num_data = CheckSpamByQuery("email", entity_value, "Registration", registration_limit, registration_time_duration)
+        if num_data != 0 && is_spam == false {
+            // check ip spam rule
+            ip := GetIPfromEntity(entity_type, entity_value)
+            message, _, _ = CheckSpamByQuery("ip", ip, "Install", ip_install_limit, ip_install_time_duration)
+        }
     case "ip":
         message, _, _ = CheckSpamByQuery("ip", entity_value, "Install", ip_install_limit, ip_install_time_duration)
     default:
@@ -71,8 +76,8 @@ func (s *server) CheckSpam(ctx context.Context, in *pb.AssessmentRequest) (*pb.A
     return &pb.AssessmentReply{Message: message}, nil
 }
 
-func GetIPfromUserID (user_id string) (ip string) {
-    jq := gojsonq.New().FromString(json).Where("user_id", "=", user_id)
+func GetIPfromEntity (entity_type string, entity_value string) (ip string) {
+    jq := gojsonq.New().FromString(json).Where(entity_type, "=", entity_value)
     return jq.Get().([]interface{})[0].(map[string]interface{})["ip"].(string) // return first ip data
 }
 
