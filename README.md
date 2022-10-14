@@ -9,41 +9,88 @@ This project is a spam assessment application based on Go programming language a
 	```
 	git clone https://github.com/tinahhhhh/go-grpc.git
 	```
+	
+### Run locally
+1. Install Go from [here](https://go.dev/doc/install)
+2. Install gRPC
 
-2. **Modify** the **server/Dockerfile** file (In the last line (#22)) by providing URL for the data source.
-
-	```
-	ENTRYPOINT cd /go/src/grpc-client && go run main.go -url https:xxx
-	```
-3. Run the server
 
 	```
-	cd server
-	docker build . -t server
-	docker run server
-	```
-4. Run the client
+	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2 
+   go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
+   export PATH="$PATH:$(go env GOPATH)/bin"s
+	``` 
+3. Install Protocol buffer compiler
 
 	```
-	cd client
-	docker build . -t client
-	docker run client
+	apt install -y protobuf-compiler
 	```
 
-5. Input the data you like to spam check in the client under the format "entity\_type:entity\_value".
+4. Run the server
+
+	```
+	go run server/main.go -url https:xxx
+	```
+
+5. Run the client
+
+	```
+	go run client/main.go
+	```
+	
+6. Input the data you like to spam check in the client under the format "entity\_type:entity\_value".
 
 	```
 	e.g. user_id:xxx
 	     email:xxx@xxx.com
 	     ip: xx.xx.xx.xx
 	``` 
-6. Result
 
-   <img src="imgs/result.png"/>  
-   <img src="imgs/result2.png" style="width:1000px;"/> 
-   <img src="imgs/result3.png" style="width:500px;"/> 
 
-## Test
+
+### Run on docker continers
+TODO: Use docker composer to make client and server contrainer comunicate. 
+      Use socat to execute STDIN to the client container.
+
+1. **Modify** the **server/Dockerfile** file (In the last line (#22)) by providing URL for the data source.
+
+	```
+	ENTRYPOINT cd /go/src/grpc-client && go run main.go -url https:xxx
+	```
+2. Run the server (Please provide the url.)
+
+	```
+	cd server
+	docker build . -t server 
+	docker run server -p 50051:50051
+	```
+3. Run the client
+
+	```
+	cd client
+	docker build . -t client 
+	docker run -i client -p 50051:50051
+	```
+
+4. Input the data you like to spam check in the client under the format "entity\_type:entity\_value".
+
+	```
+	e.g. user_id:xxx
+	     email:xxx@xxx.com
+	     ip: xx.xx.xx.xx
+	``` 
+	
+## Result
+
+<img src="imgs/result.png"/>  
+
+
+## Unit Test
+
+```
+	cd server
+	go test
+```
 
 ## References
 1. [build go + grpc](https://grpc.io/docs/languages/go/quickstart/)
